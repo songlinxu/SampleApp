@@ -1,22 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Interactive Input</title>
-    <script>
-        function showAlert() {
-            const input = "{{ user_input | safe }}";
-            if (input) {
-                alert("You entered: " + input);
-            }
-        }
-    </script>
+  <meta charset="UTF-8" />
+  <title>CartPole DRL Agent UI</title>
+  <style>
+    .box {
+      width: 120px;
+      height: 120px;
+      display: inline-block;
+      margin: 20px;
+      border: 2px solid black;
+      font-size: 24px;
+      line-height: 120px;
+      text-align: center;
+      user-select: none;
+    }
+    .highlight-0 {
+      background-color: red;
+      color: white;
+    }
+    .highlight-1 {
+      background-color: blue;
+      color: white;
+    }
+  </style>
 </head>
-<body onload="showAlert()">
-    <h1>Enter something below:</h1>
-    <form method="post">
-        <input type="text" name="user_input" required />
-        <button type="submit">Submit</button>
-    </form>
+<body>
+  <h2>CartPole DRL Agent Interactive Demo</h2>
+
+  <div>
+    <button onclick="sendInput('A')">Button A (Balanced)</button>
+    <button onclick="sendInput('B')">Button B (Slight Tilt)</button>
+    <button onclick="sendInput('C')">Button C (More Tilt)</button>
+    <button onclick="sendInput('D')">Button D (Unstable)</button>
+  </div>
+
+  <h3>Predicted Action:</h3>
+  <div id="box0" class="box">Action 0</div>
+  <div id="box1" class="box">Action 1</div>
+
+  <script>
+    function sendInput(buttonId) {
+      fetch("/interact", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ button: buttonId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Reset boxes
+        document.getElementById("box0").className = "box";
+        document.getElementById("box1").className = "box";
+
+        if (data.action !== undefined) {
+          document.getElementById("box" + data.action).classList.add("highlight-" + data.action);
+        } else if (data.error) {
+          alert("Error: " + data.error);
+        }
+      })
+      .catch(err => alert("Request failed: " + err));
+    }
+  </script>
 </body>
 </html>
