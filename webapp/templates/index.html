@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Interactive Input</title>
+    <script>
+        function showAlert() {
+            const input = "{{ user_input | safe }}";
+            if (input) {
+                alert("You entered: " + input);
+            }
+        }
+    </script>
+</head>
+<body onload="showAlert()">
+    <h1>Enter something below:</h1>
+    <form method="post">
+        <input type="text" name="user_input" required />
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
